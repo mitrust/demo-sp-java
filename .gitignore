@@ -1,0 +1,86 @@
+# https://github.com/github/gitignore/blob/master/Maven.gitignore
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+
+# Custom
+
+*.class
+
+# Package Files #
+# *.jar keep jar as we may need to commit external jars not in any maven repo
+*.war
+*.ear
+
+# eclipse
+target
+.classpath
+.project
+.settings
+bin
+
+# JavaMissionControl
+*.jfr
+
+#netbeans
+nbproject
+
+# hs_err
+*.log
+*.log.gz
+
+#android
+gen
+proguard
+local.properties
+
+#IntelliJ
+*.iml
+
+.DS_Store
+Thumbs.db
+
+#Crashlytics
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
+/pricestore/src/main/resources/nbproject/private/
+
+#Android Studio
+#http://stackoverflow.com/questions/16736856/what-should-be-in-my-gitignore-for-an-android-studio-project
+.gradle
+/local.properties
+.idea
+.google
+.DS_Store
+#build is expected by NodeWebPack
+#build
+captures
+screenshots
+*.apk
+
+# H2
+*.db
+
+# NPM
+node
+node_modules
+
+# mvn release
+pom.xml.releaseBackup
+
+# SSL Certificates
+*.m-itrust.com.pfx
+
+.pmd
+.pmdruleset.xml
+.checkstyle
+
+

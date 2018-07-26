@@ -1,0 +1,17 @@
+#
+# Copyright © 2018 MiTrust (benoit@m-itrust.com)
+#
+# 						Unauthorized copying of this file, via any
+# 						medium is strictly prohibited Proprietary and confidential
+#
+
+debug: false
+server.port: 8080
+
+mitrust_url: https://uat-api.m-itrust.com
+
+mitrust:
+  oauth2:
+    # We need to ensure OnlineDemo have a different clientId than demo run from local, even if based on Azure PGSQL
+    client_id: <CLIENT_ID>
+    secret_key: <SECRET_KEY>
