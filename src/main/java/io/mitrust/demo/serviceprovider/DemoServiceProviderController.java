@@ -11,10 +11,8 @@ import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
@@ -65,8 +64,6 @@ import com.google.common.io.CharStreams;
 @RequestMapping(value = { DemoServiceProviderController.SP_NAMESPACE })
 @Controller
 public class DemoServiceProviderController {
-	private static final String DATA_SHARING_ENTRYPOINT = "data-sharing/v1/share-to-sp";
-
 	protected static final Logger LOGGER = LoggerFactory.getLogger(DemoServiceProviderController.class);
 
 	public static final String SP_NAMESPACE = "data/v1/";
@@ -234,15 +231,10 @@ public class DemoServiceProviderController {
 	 */
 	@GetMapping("authorize")
 	public ResponseEntity<?> toMiTrustAutorizeScreen(HttpServletRequest request,
-			@RequestParam(defaultValue = "popup") String mode,
 			@RequestParam(defaultValue = "address") String scope)
 			throws UnsupportedEncodingException, MalformedURLException {
 		// We may have another way to identify an EndUser
 		String europcarUserId = UUID.randomUUID().toString();
-
-		if (!Arrays.asList("popup", "iframe").contains(mode)) {
-			throw new IllegalStateException("The mode for authorization should be either 'popup' or 'iframe'");
-		}
 
 		// We generate a new random state
 		String state = generateUniqueState();
@@ -256,22 +248,8 @@ public class DemoServiceProviderController {
 
 		Object[] uriVariables = new Object[] { MITRUST_CLIENT_ID, scope, redirectUri(request), state, "code" };
 
-		if ("popup".equals(mode)) {
-			// This link could be used in a "<a target='_blank' href='authorize'>" link
-			return MvcHelpers.redirectTo(uriTemplateHandler, linkTemplate, uriVariables);
-		} else {
-			URI fullLink = uriTemplateHandler.expand(linkTemplate, uriVariables);
-
-			// This will open a page inside the service-provider domain, but embedding MiTrust
-			// TODO MiTrust should decide if this is a legal usage or not (as iframe are inherently not safe)
-			// model.addAttribute("iframe.source", fullLink.toURL().toExternalForm());
-			String result = loadToString("/templates/iframe.html");
-
-			// Customize the iframe with MiTrust URL
-			result = result.replace("{iframe.source}", fullLink.toURL().toExternalForm());
-
-			return ResponseEntity.ok(result);
-		}
+		// This link could be used in a "<a target='_blank' href='authorize'>" link
+		return MvcHelpers.redirectTo(uriTemplateHandler, linkTemplate, uriVariables);
 	}
 
 	private String generateUniqueState() {
@@ -442,14 +420,13 @@ public class DemoServiceProviderController {
 			throw e;
 		}
 
-		if (tokenResponseEntity.getStatusCodeValue() == 200) {
+		if (tokenResponseEntity.getStatusCodeValue() == HttpStatus.OK.value()) {
 			Map<?, ?> tokenBody = tokenResponseEntity.getBody();
 
 			// Now we have an access_token, we can ask for userInfo
 			String accessToken = (String) tokenBody.get("access_token");
 
 			// TODO: Security checks to ensure the token is legit?
-
 			return accessTokenHandler.apply(accessToken);
 		} else {
 			return errorResponseHandler.apply(tokenResponseEntity);
