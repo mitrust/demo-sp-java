@@ -41,7 +41,7 @@ public class DemoDataSharingSecurityConfig extends WebSecurityConfigurerAdapter 
 		configuration.setAllowedOrigins(Arrays.asList("https://api.m-itrust.com",
 				"https://dev-api.m-itrust.com",
 				"https://uat-api.m-itrust.com",
-				"http://localhost:8085",
+				"http://localhost:8080",
 				"http://localhost:4000",
 				"http://localhost:4001"));
 		configuration.setAllowedMethods(Arrays.asList(HttpMethod.OPTIONS.name(), HttpMethod.GET.name()));
